@@ -34,7 +34,7 @@ class JsonPlaceholderClient {
         getCommentsOfLastPostForUser(1);
 
         System.out.println("\n== Get Open Tasks for User ==");
-        getOpenTasksForUser(1);
+        getOpenTodosForUser(1);
     }
 
     private static void getAllUsers() throws IOException {
@@ -264,14 +264,14 @@ class JsonPlaceholderClient {
             System.out.println("GET request for comments failed");
         }
     }
-
-    private static void getOpenTasksForUser(int userId) throws IOException {
+    
+    private static void getOpenTodosForUser(int userId) throws IOException {
         URL url = new URL(BASE_URL + "/" + userId + "/todos");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
 
         int responseCode = connection.getResponseCode();
-        System.out.println("GET Open Tasks for User Response Code: " + responseCode);
+        System.out.println("GET Todos for User Response Code: " + responseCode);
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -283,21 +283,21 @@ class JsonPlaceholderClient {
             }
             in.close();
 
-            String tasksResponse = response.toString();
-            printOpenTasks(tasksResponse);
+            String todosResponse = response.toString();
+            filterOpenTodos(todosResponse);
 
         } else {
-            System.out.println("GET request for open tasks failed");
+            System.out.println("GET request for todos failed");
         }
     }
 
-    private static void printOpenTasks(String tasksResponse) {
-        String[] tasks = tasksResponse.split("\\{");
+    private static void filterOpenTodos(String todosResponse) {
+        String[] todos = todosResponse.split("\\{");
+        System.out.println("Open tasks:");
 
-        System.out.println("Open Tasks for User:");
-        for (String task : tasks) {
-            if (task.contains("\"completed\":false")) {
-                System.out.println("{" + task.trim());
+        for (String todo : todos) {
+            if (todo.contains("\"completed\": false")) {
+                System.out.println("{" + todo);
             }
         }
     }
